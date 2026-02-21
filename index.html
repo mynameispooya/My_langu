@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Causal Language Compiler - Mobile Ready</title>
+    <title>Causal Compiler v1.8 - Debugged</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,6 +13,7 @@
             --accent: #58a6ff;
             --border: #30363d;
             --success: #238636;
+            --error: #f85149;
         }
 
         * { box-sizing: border-box; }
@@ -25,7 +26,6 @@
             padding: 10px;
             display: flex;
             justify-content: center;
-            line-height: 1.6;
         }
 
         .container {
@@ -39,34 +39,34 @@
         .header {
             text-align: center;
             padding: 10px 0;
+            border-bottom: 1px solid var(--border);
         }
 
         .header h1 {
             font-family: 'Fira Code', monospace;
             color: var(--accent);
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin: 0;
         }
 
         .api-section {
             background: var(--card-bg);
-            padding: 15px;
+            padding: 10px;
             border-radius: 8px;
             border: 1px solid var(--border);
         }
 
         input, textarea {
-            background: #010409;
+            background: #010409 !important;
             border: 1px solid var(--border);
             color: var(--text);
             padding: 12px;
             border-radius: 6px;
             font-family: inherit;
             width: 100%;
-            font-size: 16px; /* جلوگیری از زوم خودکار در iOS */
+            font-size: 16px;
         }
 
-        /* چیدمان شبکه‌ای برای رسپانسیو بودن */
         .fields-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -74,9 +74,7 @@
         }
 
         @media (min-width: 768px) {
-            .fields-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+            .fields-grid { grid-template-columns: 1fr 1fr; }
             .full-width { grid-column: span 2; }
         }
 
@@ -92,15 +90,15 @@
             display: block;
             margin-bottom: 8px;
             font-family: 'Fira Code', monospace;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--accent);
-            text-align: right;
         }
 
         textarea {
-            min-height: 120px;
+            min-height: 140px;
             text-align: left;
             direction: ltr;
+            line-height: 1.5;
         }
 
         .btn-copy {
@@ -120,14 +118,16 @@
             background: var(--success);
             color: white;
             border: none;
-            padding: 18px;
+            padding: 20px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             font-size: 1.1rem;
             width: 100%;
-            margin-top: 10px;
+            transition: 0.2s;
         }
+
+        .btn-generate:active { transform: scale(0.98); }
 
         #anatomy-output {
             margin-top: 15px;
@@ -140,9 +140,9 @@
         .word-bubble {
             background: #21262d;
             border: 1px solid var(--border);
-            padding: 6px 12px;
-            border-radius: 15px;
-            cursor: pointer;
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: help;
             position: relative;
             font-family: 'Fira Code', monospace;
             font-size: 0.9rem;
@@ -157,21 +157,19 @@
             background: #30363d;
             padding: 10px;
             border-radius: 8px;
-            width: 200px;
+            width: 220px;
             z-index: 100;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-            pointer-events: none;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            border: 1px solid var(--accent);
         }
 
-        .word-bubble:hover .tree-modal, .word-bubble:active .tree-modal {
-            display: block;
-        }
+        .word-bubble:hover .tree-modal { display: block; }
 
         .tree-item {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             border-bottom: 1px solid #484f58;
             padding: 5px 0;
-            color: #fff;
+            color: #e6edf3;
         }
     </style>
 </head>
@@ -179,7 +177,7 @@
 
 <div class="container">
     <div class="header">
-        <h1>CAUSAL COMPILER v1.7</h1>
+        <h1>CAUSAL COMPILER v1.8</h1>
     </div>
 
     <div class="api-section">
@@ -188,23 +186,23 @@
 
     <div class="fields-grid">
         <div class="field-container full-width">
-            <label class="label">Step 1: ورودی ترکیبی (Raw Input)</label>
+            <label class="label">Step 1: Raw Input (Persian/English)</label>
             <button class="btn-copy" onclick="copyText('inputRaw')">Copy</button>
-            <textarea id="inputRaw" placeholder="متن خود را اینجا بنویسید..."></textarea>
+            <textarea id="inputRaw" placeholder="مثلاً: من می‌خواهم به استادیوم بروم"></textarea>
         </div>
 
         <div class="full-width">
-            <button class="btn-generate" id="generateBtn" onclick="processTranslation()">GENERATE & TRANSLATE</button>
+            <button class="btn-generate" id="generateBtn" onclick="processTranslation()">CONSTRUCT LANGUAGE</button>
         </div>
 
         <div class="field-container">
-            <label class="label">Step 2: انگلیسی ساده (Refined English)</label>
+            <label class="label">Step 2: Simple English (The Ground Truth)</label>
             <button class="btn-copy" onclick="copyText('outputEnglish')">Copy</button>
             <textarea id="outputEnglish" readonly></textarea>
         </div>
 
         <div class="field-container">
-            <label class="label">Step 3: زبان اختراعی (Causal Language)</label>
+            <label class="label">Step 3: Causal Language (Latinized Anatomy)</label>
             <button class="btn-copy" onclick="copyText('outputCausalText')">Copy</button>
             <textarea id="outputCausalText" readonly style="display:none;"></textarea>
             <div id="anatomy-output"></div>
@@ -224,27 +222,39 @@
         const input = document.getElementById('inputRaw').value;
         const btn = document.getElementById('generateBtn');
 
-        if (!apiKey || !input) return alert('لطفاً ورودی و API Key را چک کنید.');
+        if (!apiKey || !input) return alert('Key and Input required.');
 
         btn.disabled = true;
-        btn.innerText = "در حال پردازش گام‌به‌گام...";
+        btn.innerText = "ENGINEERING...";
 
-        const systemPrompt = `Act as the "Causal Language Compiler" v1.7. 
-        TASK:
-        1. Translate the user input into "Simple English" (Field 2).
-        2. Translate that "Simple English" into "Causal Language" (Field 3) using these strict rules:
-           - Verbs: -is (Base), -r-is (3rd Sing), -t-is (Past).
-           - To-Be: Estis (Am), Estris (Is), Estzis (Are), Estttis (Was), Estztis (Were).
-           - Future: Volis + Root | Possession: Havis, Havris, Havtis.
-           - Modals: Potis, Debis, Oportis, Licis + Root.
-           - Markers: le- (The), -z (Plural), -o (Object), -im (Adverb).
-        RETURN ONLY JSON: { "refined_english": "...", "causal_language": "...", "anatomy_tree": { "Word": ["Part1", "Part2"] } }`;
+        // اصلاحیه پرامپت با تمرکز بر رعایت دقیق Rule 1 و ضمایر
+        const systemPrompt = `You are a Causal Language Compiler (v1.8).
+        
+        STRICT RULES:
+        1. REFINED ENGLISH: Correct the grammar but KEEP IT SIMPLE. "Want" stays "Want", do NOT use "Desire".
+        2. CAUSAL LANGUAGE (Field 3): This must be a word-for-word translation of Field 2 using these constraints:
+           - I = Ä | Me = Äo | My = Äas | You = Tu.
+           - Rule 1 (Latin Roots): GO -> Vadis (from Vado), WANT -> Volis (from Volo), EAT -> Ederis (from Edo).
+           - VERBS: Always end in '-is'.
+           - THE: "le-" prefix.
+           - PLURAL: "-z" suffix.
+           - OBJECTS: "-o" suffix.
+           - FUTURE: Volis + Root.
+           - POSSESSION: Havis, Havris, Havtis.
+           - TO-BE: Estis (am), Estris (is), Estzis (are), Esttis (was), Estztis (were).
+        
+        OUTPUT FORMAT: Return ONLY JSON.
+        {
+          "refined_english": "Simple English version",
+          "causal_language": "The Latinized version (e.g., Ä volis vadis ad le-stadiumo)",
+          "anatomy_tree": { "Word": ["Root & Latin Origin", "Functional Component"] }
+        }`;
 
         try {
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: `${systemPrompt}\n\nInput: ${input}` }] }] })
+                body: JSON.stringify({ contents: [{ parts: [{ text: `${systemPrompt}\n\nUser Input: ${input}` }] }] })
             });
 
             const data = await response.json();
@@ -256,10 +266,11 @@
             
             renderAnatomy(result.causal_language, result.anatomy_tree);
         } catch (e) {
-            alert('خطا در مدل gemini-2.5-flash. از اتصال و کد API مطمئن شوید.');
+            console.error(e);
+            alert('Error with gemini-2.5-flash. Check console.');
         } finally {
             btn.disabled = false;
-            btn.innerText = "GENERATE & TRANSLATE";
+            btn.innerText = "CONSTRUCT LANGUAGE";
         }
     }
 
@@ -274,10 +285,11 @@
 
             const modal = document.createElement('div');
             modal.className = 'tree-modal';
-            (tree[clean] || ["Root: "+clean]).forEach(p => {
+            const details = tree[clean] || ["Root: "+clean, "Structural component"];
+            details.forEach(d => {
                 const item = document.createElement('div');
                 item.className = 'tree-item';
-                item.innerText = p;
+                item.innerText = d;
                 modal.appendChild(item);
             });
             bubble.appendChild(modal);
