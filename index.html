@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Causal Compiler v1.8 - Debugged</title>
+    <title>Causal Compiler v1.9 - Logic Fixed</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,7 +13,6 @@
             --accent: #58a6ff;
             --border: #30363d;
             --success: #238636;
-            --error: #f85149;
         }
 
         * { box-sizing: border-box; }
@@ -127,8 +126,6 @@
             transition: 0.2s;
         }
 
-        .btn-generate:active { transform: scale(0.98); }
-
         #anatomy-output {
             margin-top: 15px;
             display: flex;
@@ -177,7 +174,7 @@
 
 <div class="container">
     <div class="header">
-        <h1>CAUSAL COMPILER v1.8</h1>
+        <h1>CAUSAL COMPILER v1.9</h1>
     </div>
 
     <div class="api-section">
@@ -196,13 +193,13 @@
         </div>
 
         <div class="field-container">
-            <label class="label">Step 2: Simple English (The Ground Truth)</label>
+            <label class="label">Step 2: Simple English</label>
             <button class="btn-copy" onclick="copyText('outputEnglish')">Copy</button>
             <textarea id="outputEnglish" readonly></textarea>
         </div>
 
         <div class="field-container">
-            <label class="label">Step 3: Causal Language (Latinized Anatomy)</label>
+            <label class="label">Step 3: Causal Language (Anatomy Fixed)</label>
             <button class="btn-copy" onclick="copyText('outputCausalText')">Copy</button>
             <textarea id="outputCausalText" readonly style="display:none;"></textarea>
             <div id="anatomy-output"></div>
@@ -225,29 +222,29 @@
         if (!apiKey || !input) return alert('Key and Input required.');
 
         btn.disabled = true;
-        btn.innerText = "ENGINEERING...";
+        btn.innerText = "PROCESSING LOGIC...";
 
-        // اصلاحیه پرامپت با تمرکز بر رعایت دقیق Rule 1 و ضمایر
-        const systemPrompt = `You are a Causal Language Compiler (v1.8).
+        const systemPrompt = `You are a Causal Language Compiler (v1.9). 
         
-        STRICT RULES:
-        1. REFINED ENGLISH: Correct the grammar but KEEP IT SIMPLE. "Want" stays "Want", do NOT use "Desire".
-        2. CAUSAL LANGUAGE (Field 3): This must be a word-for-word translation of Field 2 using these constraints:
-           - I = Ä | Me = Äo | My = Äas | You = Tu.
-           - Rule 1 (Latin Roots): GO -> Vadis (from Vado), WANT -> Volis (from Volo), EAT -> Ederis (from Edo).
-           - VERBS: Always end in '-is'.
-           - THE: "le-" prefix.
-           - PLURAL: "-z" suffix.
-           - OBJECTS: "-o" suffix.
-           - FUTURE: Volis + Root.
-           - POSSESSION: Havis, Havris, Havtis.
-           - TO-BE: Estis (am), Estris (is), Estzis (are), Esttis (was), Estztis (were).
+        STRICT GRAMMAR ARCHITECTURE:
+        1. REFINED ENGLISH: Keep it simple. "Want" stays "Want".
+        2. INFINITIVE MARKER: Use "te" to connect two verbs (e.g., want TO go -> volis te vad).
+        3. LOCATION PREPOSITION: Use "ad" for directions (e.g., to school -> ad Scol).
+        4. OBJECT MARKER: Use "-o" ONLY for direct objects. DO NOT add "-o" to locations like School or Stadium.
+        5. VERBS: Main verbs end in "-is". Secondary verbs (after 'te') are just the root.
+        6. PRONOUNS: I = Ä, Me = Äo, My = Äas, You = Tu.
+        7. DICTIONARY: Go = Vad, Want = Vol, School = Scol, Stadium = Stadium.
         
         OUTPUT FORMAT: Return ONLY JSON.
         {
-          "refined_english": "Simple English version",
-          "causal_language": "The Latinized version (e.g., Ä volis vadis ad le-stadiumo)",
-          "anatomy_tree": { "Word": ["Root & Latin Origin", "Functional Component"] }
+          "refined_english": "The simple version",
+          "causal_language": "Ä volis te vad ad Scol.",
+          "anatomy_tree": { 
+              "volis": ["Vol: Want", "-is: Present Verb"], 
+              "te": ["Infinitive Marker", "Connects two verbs"],
+              "vad": ["Vad: Go", "Root form (Worker)"],
+              "ad": ["Preposition", "Location/Direction"]
+          }
         }`;
 
         try {
@@ -267,7 +264,7 @@
             renderAnatomy(result.causal_language, result.anatomy_tree);
         } catch (e) {
             console.error(e);
-            alert('Error with gemini-2.5-flash. Check console.');
+            alert('Error. Check console or API Key.');
         } finally {
             btn.disabled = false;
             btn.innerText = "CONSTRUCT LANGUAGE";
@@ -285,7 +282,7 @@
 
             const modal = document.createElement('div');
             modal.className = 'tree-modal';
-            const details = tree[clean] || ["Root: "+clean, "Structural component"];
+            const details = tree[clean] || ["Root: "+clean, "Functional part"];
             details.forEach(d => {
                 const item = document.createElement('div');
                 item.className = 'tree-item';
