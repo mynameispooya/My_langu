@@ -3,57 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Causal Compiler v5.1 - High Capacity</title>
+    <title>Causal Compiler v6.0 - Final Architecture</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #0d1117; --card-bg: #161b22; --text: #c9d1d9; --accent: #58a6ff; --border: #30363d; --success: #238636; }
         * { box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; line-height: 1.4; }
-        .container { width: 100%; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
-        .header h1 { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 1.3rem; text-align: center; margin: 15px 0; letter-spacing: 2px; }
-        .api-section { background: var(--card-bg); padding: 10px; border-radius: 12px; border: 1px solid var(--border); }
-        input, textarea { background: #010409 !important; border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 8px; width: 100%; font-size: 15px; outline: none; transition: 0.3s; }
-        input:focus, textarea:focus { border-color: var(--accent); }
-        .field-container { position: relative; background: var(--card-bg); padding: 15px; border-radius: 15px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .label { display: block; margin-bottom: 8px; font-family: 'Fira Code', monospace; font-size: 0.8rem; color: var(--accent); text-align: right; font-weight: 600; }
-        textarea { min-height: 120px; text-align: left; direction: ltr; resize: vertical; }
-        .btn-generate { background: var(--success); color: white; border: none; padding: 18px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 1.1rem; width: 100%; transition: 0.2s; box-shadow: 0 4px 10px rgba(35, 134, 54, 0.3); }
-        .btn-generate:active { transform: scale(0.98); }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; }
+        .container { width: 100%; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+        .header h1 { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 1.2rem; text-align: center; margin: 10px 0; }
+        .api-section { background: var(--card-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border); }
+        input, textarea { background: #010409 !important; border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 6px; width: 100%; font-size: 15px; outline: none; }
+        .field-container { position: relative; background: var(--card-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border); }
+        .label { display: block; margin-bottom: 6px; font-family: 'Fira Code', monospace; font-size: 0.75rem; color: var(--accent); text-align: right; }
+        textarea { min-height: 80px; text-align: left; direction: ltr; resize: none; }
+        .btn-copy { position: absolute; top: 8px; left: 8px; background: #21262d; border: 1px solid var(--border); color: var(--accent); cursor: pointer; padding: 5px 10px; border-radius: 4px; font-size: 0.65rem; }
+        .btn-generate { background: var(--success); color: white; border: none; padding: 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem; width: 100%; }
         
-        /* Alignment UI */
-        #alignment-area { margin-top: 10px; display: grid; grid-template-columns: 1fr; gap: 8px; direction: ltr; }
-        .align-pair { display: flex; background: #0d1117; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; align-items: stretch; }
-        .eng-part { width: 35%; background: #1c2128; padding: 10px; font-size: 0.85rem; border-right: 1px solid var(--border); color: #8b949e; }
-        .causal-part { width: 65%; padding: 10px; font-family: 'Fira Code', monospace; font-size: 0.95rem; color: #fff; }
+        /* Alignment Table */
+        #align-table { width: 100%; border-collapse: collapse; margin-top: 10px; direction: ltr; }
+        .row-align { border-bottom: 1px solid var(--border); }
+        .cell { padding: 8px; font-family: 'Fira Code', monospace; font-size: 0.85rem; }
+        .c-eng { color: #8b949e; width: 35%; }
+        .c-causal { color: #fff; width: 65%; }
 
-        /* Markers */
-        .m-verb { color: #ff4d4d; font-weight: bold; border-bottom: 2px solid #ff4d4d33; } 
-        .m-inf  { color: #ffa500; font-weight: bold; border-bottom: 2px solid #ffa50033; } 
-        .m-adv  { color: #ff69b4; font-weight: bold; border-bottom: 2px solid #ff69b433; } 
-        .m-past { color: #bf00ff; font-weight: bold; border-bottom: 2px solid #bf00ff33; } 
-        .m-3rd  { color: #00ff00; font-weight: bold; border-bottom: 2px solid #00ff0033; } 
-        .m-ing  { color: #00bfff; font-weight: bold; border-bottom: 2px solid #00bfff33; } 
-        .m-pp   { color: #ffff00; font-weight: bold; border-bottom: 2px solid #ffff0033; }
+        /* Markers - CSS Injection */
+        .m-verb { color: #ff4d4d; font-weight: bold; } .m-inf { color: #ffa500; font-weight: bold; } 
+        .m-adv { color: #ff69b4; font-weight: bold; } .m-past { color: #bf00ff; font-weight: bold; } 
+        .m-3rd { color: #00ff00; font-weight: bold; } .m-ing { color: #00bfff; font-weight: bold; } 
+        .m-pp { color: #ffff00; font-weight: bold; }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="header"><h1>CAUSAL COMPILER v5.1</h1></div>
+    <div class="header"><h1>CAUSAL COMPILER v6.0</h1></div>
     <div class="api-section"><input type="password" id="apiKey" placeholder="Gemini API Key..."></div>
+    
     <div class="field-container">
-        <label class="label">Step 1: Universal Input (Long Text Support)</label>
-        <textarea id="inputRaw" placeholder="Enter long English text (even 20 lines)..."></textarea>
+        <label class="label">1. English Input</label>
+        <textarea id="inRaw">I have two books and I am going to school.</textarea>
     </div>
-    <button class="btn-generate" onclick="processTranslation()" id="generateBtn">ANALYZE ANATOMICAL MAPPING</button>
+
+    <button class="btn-generate" onclick="run()">EXECUTE FULL COMPILATION</button>
+
     <div class="field-container">
-        <label class="label">Step 2: Anatomical Alignment & Highlighting</label>
-        <div id="alignment-area"></div>
+        <label class="label">2. Corrected English</label>
+        <button class="btn-copy" onclick="copy('outEng')">COPY</button>
+        <textarea id="outEng" readonly></textarea>
+    </div>
+
+    <div class="field-container">
+        <label class="label">3. Causal Language (Raw)</label>
+        <button class="btn-copy" onclick="copy('outCausal')">COPY</button>
+        <textarea id="outCausal" readonly></textarea>
+    </div>
+
+    <div class="field-container">
+        <label class="label">4. Anatomical Alignment (Visual Mapping)</label>
+        <table id="align-table"></table>
     </div>
 </div>
 
 <script>
-    function highlightAnatomy(word) {
-        if(!word) return "";
+    function copy(id) { navigator.clipboard.writeText(document.getElementById(id).value); alert('Copied!'); }
+
+    function colorize(word) {
         return word
             .replace(/([a-zA-Z]+)(r)(is)/g, '$1<span class="m-3rd">$2</span><span class="m-verb">$3</span>')
             .replace(/([a-zA-Z]+)(t)(is)/g, '$1<span class="m-past">$2</span><span class="m-verb">$3</span>')
@@ -64,51 +77,53 @@
             .replace(/([a-zA-Z]+)(at)\b/g, '$1<span class="m-pp">$2</span>');
     }
 
-    async function processTranslation() {
-        const apiKey = document.getElementById('apiKey').value;
-        const input = document.getElementById('inputRaw').value;
-        const btn = document.getElementById('generateBtn');
-        if (!apiKey || !input) return alert('Fill all fields.');
+    async function run() {
+        const key = document.getElementById('apiKey').value;
+        const input = document.getElementById('inRaw').value;
+        const btn = document.querySelector('.btn-generate');
+        if(!key || !input) return alert('Key/Input missing.');
         
-        btn.disabled = true; btn.innerText = "STREAMING ANATOMY...";
-        const area = document.getElementById('alignment-area');
-        area.innerHTML = '';
+        btn.disabled = true; btn.innerText = "PROCESSING...";
         
-        const systemPrompt = `You are Causal Compiler v5.1. No JSON. No HTML.
-        Task: Map English words to Causal Language words exactly. 
-        Rules: 1.Havis=Have [cite: 2026-02-21]. 2.z=Plural [cite: 2026-02-21]. 3.Verb=-is, Inf=-er, Adv=-im, 3rd=-r-is, Past=-t-is, Ing=-an, PP=-at.
-        4.Path: Latin -> Root -> Erosion. [cite: 2026-02-20]
-        Format: Each line must be: EnglishWord === CausalWord`;
+        const prompt = `Act as Causal Compiler v6.0. 
+        RULES:
+        1. Anatomy must match English exactly. [cite: 2026-02-20]
+        2. Words: Latin -> Root -> Erosion (melodic/short). [cite: 2026-02-20]
+        3. Mandatory: Have = "Havis" [cite: 2026-02-21]. Plural = "-z" [cite: 2026-02-21].
+        4. Suffixes: Verb=-is, Inf=-er, Adv=-im, 3rd=-r-is, Past=-t-is, Continuous=-an, PP=-at.
+        OUTPUT FORMAT (Strict):
+        Corrected English: [Text]
+        Causal Text: [Text]
+        Mapping:
+        EnglishWord === CausalWord
+        EnglishWord === CausalWord`;
 
         try {
-            const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + apiKey, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: systemPrompt + "\n\nInput Text:\n" + input }] }] })
+            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt + "\n\nInput: " + input }] }] })
             });
-            const data = await response.json();
-            const rawOutput = data.candidates[0].content.parts[0].text;
+            const data = await resp.json();
+            const res = data.candidates[0].content.parts[0].text;
+
+            document.getElementById('outEng').value = res.split('Causal Text:')[0].replace('Corrected English:', '').trim();
+            document.getElementById('outCausal').value = res.split('Mapping:')[0].split('Causal Text:')[1].trim();
             
-            const lines = rawOutput.split('\n').filter(l => l.includes('==='));
+            const mappingPart = res.split('Mapping:')[1].trim().split('\n');
+            const table = document.getElementById('align-table');
+            table.innerHTML = '';
             
-            lines.forEach(line => {
-                const parts = line.split('===');
-                if(parts.length < 2) return;
-                const eng = parts[0].trim();
-                const causal = parts[1].trim();
-                
-                const div = document.createElement('div');
-                div.className = 'align-pair';
-                div.innerHTML = `
-                    <div class="eng-part">${eng}</div>
-                    <div class="causal-part">${highlightAnatomy(causal)}</div>
-                `;
-                area.appendChild(div);
+            mappingPart.forEach(line => {
+                if(line.includes('===')) {
+                    const [e, c] = line.split('===');
+                    const row = document.createElement('tr');
+                    row.className = 'row-align';
+                    row.innerHTML = `<td class="cell c-eng">${e.trim()}</td><td class="cell c-causal">${colorize(c.trim())}</td>`;
+                    table.appendChild(row);
+                }
             });
-        } catch (e) { 
-            alert('Streaming Error. Check your connection or Key.'); 
-        } finally { 
-            btn.disabled = false; btn.innerText = "ANALYZE ANATOMICAL MAPPING"; 
-        }
+        } catch (e) { alert('API/Network Error. check Key.'); }
+        finally { btn.disabled = false; btn.innerText = "EXECUTE FULL COMPILATION"; }
     }
 </script>
 </body>
