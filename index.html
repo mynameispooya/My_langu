@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Causal Compiler v3.2 - Final Morphology</title>
+    <title>Causal Compiler v3.3 - Negative Logic Fixed</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #0d1117; --card-bg: #161b22; --text: #c9d1d9; --accent: #58a6ff; --border: #30363d; --success: #238636; }
@@ -31,18 +31,18 @@
 </head>
 <body>
 <div class="container">
-    <div class="header"><h1>CAUSAL COMPILER v3.2</h1></div>
+    <div class="header"><h1>CAUSAL COMPILER v3.3</h1></div>
     <div class="api-section"><input type="password" id="apiKey" placeholder="Gemini API Key..."></div>
     <div class="fields-grid">
         <div class="field-container full-width">
-            <label class="label">Step 1: Input (e.g., He does it / I did it)</label>
+            <label class="label">Step 1: Input (e.g., I cannot do it / He did not go)</label>
             <button class="btn-copy" onclick="copyVal('inputRaw')">COPY</button>
             <textarea id="inputRaw"></textarea>
         </div>
-        <div class="full-width"><button class="btn-generate" onclick="processTranslation()" id="generateBtn">EXECUTE FINAL MORPHOLOGY</button></div>
+        <div class="full-width"><button class="btn-generate" onclick="processTranslation()" id="generateBtn">EXECUTE LEAN COMPILATION</button></div>
         <div class="field-container"><label class="label">Step 2: Simple English</label><button class="btn-copy" onclick="copyVal('outputEnglish')">COPY</button><textarea id="outputEnglish" readonly></textarea></div>
         <div class="field-container">
-            <label class="label">Step 3: Causal Language (Anatomy Fixed)</label>
+            <label class="label">Step 3: Causal Language (Constitution v3.3)</label>
             <button class="btn-copy" onclick="copyVal('outputCausalText')">COPY</button>
             <textarea id="outputCausalText" style="display:none;"></textarea>
             <div id="anatomy-output"></div>
@@ -51,7 +51,8 @@
 </div>
 <script>
     function copyVal(id) {
-        navigator.clipboard.writeText(document.getElementById(id).value || document.getElementById(id).innerText);
+        const val = document.getElementById(id).value || document.getElementById(id).innerText;
+        navigator.clipboard.writeText(val);
         alert('Copied!');
     }
 
@@ -59,22 +60,19 @@
         const apiKey = document.getElementById('apiKey').value;
         const input = document.getElementById('inputRaw').value;
         const btn = document.getElementById('generateBtn');
-        if (!apiKey || !input) return alert('Input missing.');
-        btn.disabled = true; btn.innerText = "MORPHOLOGICAL COMPILING...";
+        if (!apiKey || !input) return alert('Key or Input required.');
+        btn.disabled = true; btn.innerText = "ALGORITHMIC COMPILING...";
 
-        const systemPrompt = `You are Causal Compiler v3.2. Apply all rules:
-        1. DO MORPHOLOGY: Root is 'fac'. 
-           - Do = facis.
-           - Does = faclis (root + 'l' marker + 'is').
-           - Did = factis (root + 't' marker + 'is').
-        2. VERBS: Present '-is', Past '-t-is', Future 'bolis' + root.
-        3. HAVE: Always 'havis'.
-        4. MODALS: Can=Potis, Must=Debis. (No 'te' after).
-        5. NOUNS: Semantic Derivation (2 Latin concepts + Erosion).
-        6. PRONOUNS: Ä, Il, El, Äas, Tuas, Ilas.
-        7. MARKERS: Object '-o', Plural 'z', The 'le-'.
+        const systemPrompt = `Act as Causal Compiler v3.3. STRICT RULES:
+        1. NEGATIVE: Use 'no' exactly like English 'not'. (e.g., I cannot = Ä potis no). Never use 'ne'.
+        2. DO MORPHOLOGY: Root='fac'. Do=facis, Does=faclis, Did=factis. 
+        3. VERBS: Present '-is', Past '-t-is', Future 'bolis' + root. 
+        4. HAVE: Always 'havis'.
+        5. MODALS: Can=Potis, Must=Debis. Followed by ROOT.
+        6. NOUNS: Semantic Derivation (2 Latin concepts + Erosion).
+        7. PRONOUNS: Ä, Il, El, Äas, Tuas, Ilas.
+        8. MARKERS: Object '-o', Plural 'z', The 'le-'.
         
-        ANATOMY HOVER: Must show Meaning, Latin Roots, and Grammar Role clearly.
         Return JSON ONLY: { "refined_english": "...", "causal_language": "...", "anatomy_tree": { "word": ["Meaning: ...", "Roots: ...", "Role: ..."] } }`;
 
         try {
@@ -92,14 +90,14 @@
                 const clean = word.replace(/[.,!?;]/g, '');
                 const bubble = document.createElement('div'); bubble.className = 'word-bubble'; bubble.innerText = word;
                 const modal = document.createElement('div'); modal.className = 'tree-modal';
-                (result.anatomy_tree[clean] || ["Structural"]).forEach(d => {
+                (result.anatomy_tree[clean] || ["Structural Grammar Marker"]).forEach(d => {
                     const item = document.createElement('div'); item.className = 'tree-item';
                     item.innerHTML = d.replace(/([^:]+):/, "<b>$1:</b>"); modal.appendChild(item);
                 });
                 bubble.appendChild(modal); container.appendChild(bubble);
             });
-        } catch (e) { alert('Error in Compilation'); }
-        finally { btn.disabled = false; btn.innerText = "EXECUTE FINAL MORPHOLOGY"; }
+        } catch (e) { alert('Check API Key or Connection.'); }
+        finally { btn.disabled = false; btn.innerText = "EXECUTE LEAN COMPILATION"; }
     }
 </script>
 </body>
