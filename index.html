@@ -1,146 +1,294 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Causal Compiler v4.5 - Immune System Active</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root { --bg: #0d1117; --card-bg: #161b22; --text: #c9d1d9; --accent: #58a6ff; --border: #30363d; --success: #238636; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; line-height: 1.4; }
-        .container { width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
-        .header h1 { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 1.2rem; text-align: center; margin: 10px 0; }
-        .api-section { background: var(--card-bg); padding: 8px; border-radius: 8px; border: 1px solid var(--border); }
-        input, textarea { background: #010409 !important; border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 6px; width: 100%; font-size: 15px; outline: none; }
-        .field-container { position: relative; background: var(--card-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border); }
-        .label { display: block; margin-bottom: 6px; font-family: 'Fira Code', monospace; font-size: 0.75rem; color: var(--accent); text-align: right; }
-        textarea { min-height: 80px; text-align: left; direction: ltr; resize: none; }
-        .btn-copy { position: absolute; top: 8px; left: 8px; background: #21262d; border: 1px solid var(--border); color: var(--accent); cursor: pointer; padding: 5px 10px; border-radius: 4px; font-size: 0.65rem; z-index: 10; transition: 0.2s; }
-        .btn-copy:hover { background: var(--border); }
-        .btn-generate { background: var(--success); color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem; width: 100%; transition: 0.2s; margin: 5px 0; }
-        #anatomy-output { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; direction: ltr; min-height: 50px; }
-        
-        /* Marker Styles for Anatomical Highlighting */
-        .m-verb { color: #ff4d4d !important; font-weight: bold; } /* is - Red */
-        .m-inf  { color: #ffa500 !important; font-weight: bold; } /* er - Orange */
-        .m-adv  { color: #ff69b4 !important; font-weight: bold; } /* im - Pink */
-        .m-past { color: #bf00ff !important; font-weight: bold; } /* t - Purple */
-        .m-3rd  { color: #00ff00 !important; font-weight: bold; } /* r - Green */
-        .m-ing  { color: #00bfff !important; font-weight: bold; } /* an - Blue */
-        .m-pp   { color: #ffff00 !important; font-weight: bold; } /* at - Yellow */
-        .m-plural { color: #58a6ff !important; border-bottom: 1px dashed #58a6ff; } /* z - Plural */
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Causal Compiler v4.5 - Stable Build</title>
 
-        .word-bubble { background: #21262d; border: 1px solid var(--border); padding: 8px 14px; border-radius: 10px; cursor: help; font-family: 'Fira Code', monospace; font-size: 0.9rem; position: relative; color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .tree-modal { display: none; position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background: #30363d; padding: 12px; border-radius: 8px; width: 260px; z-index: 100; border: 1px solid var(--accent); box-shadow: 0 8px 20px rgba(0,0,0,0.6); pointer-events: none; }
-        .word-bubble:hover .tree-modal { display: block; }
-        .tree-item { font-size: 0.75rem; border-bottom: 1px solid #484f58; padding: 5px 0; color: #e6edf3; text-align: left; }
-        .tree-item:last-child { border-bottom: none; }
-    </style>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root { --bg:#0d1117; --card-bg:#161b22; --text:#c9d1d9; --accent:#58a6ff; --border:#30363d; --success:#238636; }
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); margin:0; padding:10px; }
+.container { max-width:800px; margin:auto; display:flex; flex-direction:column; gap:12px; }
+.header h1 { font-family:'Fira Code',monospace; color:var(--accent); text-align:center; font-size:1.2rem; }
+
+.api-section { background:var(--card-bg); padding:8px; border-radius:8px; border:1px solid var(--border); }
+
+input, textarea {
+background:#010409!important;
+border:1px solid var(--border);
+color:#fff;
+padding:10px;
+border-radius:6px;
+width:100%;
+font-size:15px;
+outline:none;
+}
+
+.field-container {
+position:relative;
+background:var(--card-bg);
+padding:12px;
+border-radius:12px;
+border:1px solid var(--border);
+}
+
+.label {
+display:block;
+margin-bottom:6px;
+font-family:'Fira Code',monospace;
+font-size:0.75rem;
+color:var(--accent);
+text-align:right;
+}
+
+textarea { min-height:80px; direction:ltr; resize:none; }
+
+.btn-copy {
+position:absolute;
+top:8px;
+left:8px;
+background:#21262d;
+border:1px solid var(--border);
+color:var(--accent);
+cursor:pointer;
+padding:5px 10px;
+border-radius:4px;
+font-size:0.65rem;
+}
+
+.btn-generate {
+background:var(--success);
+color:white;
+border:none;
+padding:15px;
+border-radius:8px;
+cursor:pointer;
+font-weight:600;
+font-size:1rem;
+width:100%;
+}
+
+#anatomy-output {
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+direction:ltr;
+min-height:50px;
+}
+
+/* Marker Colors */
+.m-verb { color:#ff4d4d; font-weight:bold; }
+.m-inf  { color:#ffa500; font-weight:bold; }
+.m-adv  { color:#ff69b4; font-weight:bold; }
+.m-past { color:#bf00ff; font-weight:bold; }
+.m-3rd  { color:#00ff00; font-weight:bold; }
+.m-ing  { color:#00bfff; font-weight:bold; }
+.m-pp   { color:#ffff00; font-weight:bold; }
+
+.word-bubble {
+background:#21262d;
+border:1px solid var(--border);
+padding:8px 14px;
+border-radius:10px;
+font-family:'Fira Code',monospace;
+position:relative;
+color:#fff;
+}
+
+.tree-modal {
+display:none;
+position:absolute;
+bottom:120%;
+left:50%;
+transform:translateX(-50%);
+background:#30363d;
+padding:12px;
+border-radius:8px;
+width:260px;
+border:1px solid var(--accent);
+pointer-events:none;
+}
+
+.word-bubble:hover .tree-modal { display:block; }
+
+.tree-item {
+font-size:0.75rem;
+border-bottom:1px solid #484f58;
+padding:5px 0;
+}
+
+.tree-item:last-child { border-bottom:none; }
+</style>
 </head>
+
 <body>
 <div class="container">
-    <div class="header"><h1>CAUSAL COMPILER v4.5</h1></div>
-    <div class="api-section"><input type="password" id="apiKey" placeholder="Gemini API Key..."></div>
-    <div class="field-container">
-        <label class="label">Step 1: Input (English)</label>
-        <button class="btn-copy" onclick="copyById('inputRaw')">COPY</button>
-        <textarea id="inputRaw" placeholder="Enter English sentence..."></textarea>
-    </div>
-    <button class="btn-generate" onclick="processTranslation()" id="generateBtn">EXECUTE STABLE COMPILATION</button>
-    <div class="field-container">
-        <label class="label">Step 2: Polished English</label>
-        <button class="btn-copy" onclick="copyById('outputEnglish')">COPY</button>
-        <textarea id="outputEnglish" readonly></textarea>
-    </div>
-    <div class="field-container">
-        <label class="label">Step 3: Causal Language (Colored Anatomy)</label>
-        <button class="btn-copy" onclick="copyBubbles()">COPY</button>
-        <div id="anatomy-output"></div>
-    </div>
+
+<div class="header"><h1>CAUSAL COMPILER v4.5</h1></div>
+
+<div class="api-section">
+<input type="password" id="apiKey" placeholder="Gemini API Key...">
+</div>
+
+<div class="field-container">
+<label class="label">Step 1: Input (English)</label>
+<button class="btn-copy" onclick="copyById('inputRaw')">COPY</button>
+<textarea id="inputRaw" placeholder="Enter English sentence..."></textarea>
+</div>
+
+<button class="btn-generate" onclick="processTranslation()" id="generateBtn">
+EXECUTE STABLE COMPILATION
+</button>
+
+<div class="field-container">
+<label class="label">Step 2: Polished English</label>
+<button class="btn-copy" onclick="copyById('outputEnglish')">COPY</button>
+<textarea id="outputEnglish" readonly></textarea>
+</div>
+
+<div class="field-container">
+<label class="label">Step 3: Causal Language</label>
+<button class="btn-copy" onclick="copyBubbles()">COPY</button>
+<div id="anatomy-output"></div>
+</div>
+
 </div>
 
 <script>
-    function copyById(id) { navigator.clipboard.writeText(document.getElementById(id).value); alert('Copied!'); }
-    function copyBubbles() { 
-        const text = Array.from(document.querySelectorAll('.word-bubble')).map(b => b.innerText).join(' ');
-        navigator.clipboard.writeText(text); alert('Causal Text Copied!'); 
-    }
-    
-    function highlightAnatomy(word) {
-        return word
-            .replace(/([a-zA-Z]+)(r)(is)/g, '$1<span class="m-3rd">$2</span><span class="m-verb">$3</span>')
-            .replace(/([a-zA-Z]+)(t)(is)/g, '$1<span class="m-past">$2</span><span class="m-verb">$3</span>')
-            .replace(/([a-zA-Z]+)(is)\b/g, '$1<span class="m-verb">$2</span>')
-            .replace(/([a-zA-Z]+)(er)\b/g, '$1<span class="m-inf">$2</span>')
-            .replace(/([a-zA-Z]+)(im)\b/g, '$1<span class="m-adv">$2</span>')
-            .replace(/([a-zA-Z]+)(an)\b/g, '$1<span class="m-ing">$2</span>')
-            .replace(/([a-zA-Z]+)(at)\b/g, '$1<span class="m-pp">$2</span>')
-            .replace(/([a-zA-Z]+)(z)\b/g, '$1<span class="m-plural">$2</span>');
-    }
 
-    async function processTranslation() {
-        const apiKey = document.getElementById('apiKey').value;
-        const input = document.getElementById('inputRaw').value;
-        const btn = document.getElementById('generateBtn');
-        if (!apiKey || !input) return alert('Please enter API Key and Input text.');
-        
-        btn.disabled = true; btn.innerText = "EXTRACTING ANATOMY...";
-        
-        const systemPrompt = `You are Causal Compiler v4.5. 
-        - RULE 1: Latin word -> Root -> Erosion into short melodic word.
-        - PLURAL: Suffix 'z' (e.g., carz).
-        - HAVE: Root 'Havis'.
-        - STRUCTURE: Exact English anatomy.
-        - SUFFIXES: VERB=-is, INFINITIVE=-er, ADVERB=-im, 3rd=-r-is, PAST=-t-is, ING=-an, PP=-at.
-        - OUTPUT: ONLY valid JSON.
-        { "refined_english": "...", "causal_language": "...", "anatomy_tree": { "word": ["Meaning: ...", "Latin: ...", "Erosion: ..."] } }`;
+function copyById(id){
+navigator.clipboard.writeText(document.getElementById(id).value);
+alert("Copied!");
+}
 
-        try {
-            const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + apiKey, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: systemPrompt + "\n\nInput: " + input }] }] })
-            });
-            const data = await response.json();
-            
-            // Robust parsing: Find the JSON block inside any possible markdown
-            const textResponse = data.candidates[0].content.parts[0].text;
-            const start = textResponse.indexOf('{');
-            const end = textResponse.lastIndexOf('}');
-            if (start === -1 || end === -1) throw new Error("Parsing Error: Invalid JSON structure.");
-            
-            const result = JSON.parse(textResponse.substring(start, end + 1));
-            
-            document.getElementById('outputEnglish').value = result.refined_english;
-            const container = document.getElementById('anatomy-output');
-            container.innerHTML = '';
-            
-            result.causal_language.split(/\s+/).forEach(word => {
-                if (!word) return;
-                const cleanKey = word.replace(/[.,!?;]/g, '');
-                const bubble = document.createElement('div');
-                bubble.className = 'word-bubble';
-                bubble.innerHTML = highlightAnatomy(word);
-                
-                const modal = document.createElement('div');
-                modal.className = 'tree-modal';
-                const anatomyInfo = result.anatomy_tree[cleanKey] || result.anatomy_tree[cleanKey.toLowerCase()] || ["Anatomically Valid Unit"];
-                anatomyInfo.forEach(d => {
-                    const item = document.createElement('div');
-                    item.className = 'tree-item';
-                    item.innerHTML = d.replace(/([^:]+):/, "<b>$1:</b>");
-                    modal.appendChild(item);
-                });
-                bubble.appendChild(modal);
-                container.appendChild(bubble);
-            });
-        } catch (e) { 
-            console.error(e);
-            alert('Anatomical Error: ' + e.message); 
-        } finally { 
-            btn.disabled = false; btn.innerText = "EXECUTE STABLE COMPILATION"; 
-        }
-    }
+function copyBubbles(){
+const text = Array.from(document.querySelectorAll('.word-bubble'))
+.map(b=>b.innerText).join(' ');
+navigator.clipboard.writeText(text);
+alert("Causal Text Copied!");
+}
+
+function highlightAnatomy(word){
+return word
+.replace(/([a-zA-Z]+)(r)(is)/g,'$1<span class="m-3rd">$2</span><span class="m-verb">$3</span>')
+.replace(/([a-zA-Z]+)(t)(is)/g,'$1<span class="m-past">$2</span><span class="m-verb">$3</span>')
+.replace(/([a-zA-Z]+)(is)\b/g,'$1<span class="m-verb">$2</span>')
+.replace(/([a-zA-Z]+)(er)\b/g,'$1<span class="m-inf">$2</span>')
+.replace(/([a-zA-Z]+)(im)\b/g,'$1<span class="m-adv">$2</span>')
+.replace(/([a-zA-Z]+)(an)\b/g,'$1<span class="m-ing">$2</span>')
+.replace(/([a-zA-Z]+)(at)\b/g,'$1<span class="m-pp">$2</span>');
+}
+
+async function processTranslation(){
+
+const apiKey = document.getElementById('apiKey').value.trim();
+const input = document.getElementById('inputRaw').value.trim();
+const btn = document.getElementById('generateBtn');
+
+if(!apiKey || !input){
+alert("Please enter API Key and Input text.");
+return;
+}
+
+btn.disabled=true;
+btn.innerText="Processing...";
+
+try{
+
+const response = await fetch(
+'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+apiKey,
+{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+contents:[{parts:[{text:input}]}]
+})
+}
+);
+
+const data = await response.json();
+
+if(!response.ok){
+throw new Error(data.error?.message || "API request failed");
+}
+
+if(
+!data ||
+!data.candidates ||
+!Array.isArray(data.candidates) ||
+data.candidates.length===0 ||
+!data.candidates[0].content ||
+!data.candidates[0].content.parts ||
+!data.candidates[0].content.parts[0] ||
+!data.candidates[0].content.parts[0].text
+){
+console.log("Invalid Response:",data);
+throw new Error("Model returned invalid structure");
+}
+
+const rawText = data.candidates[0].content.parts[0].text;
+
+let parsed;
+
+try{
+parsed = JSON.parse(rawText);
+}catch{
+const match = rawText.match(/\{[\s\S]*\}/);
+if(!match) throw new Error("No valid JSON found in model output");
+parsed = JSON.parse(match[0]);
+}
+
+if(!parsed.refined_english || !parsed.causal_language){
+throw new Error("Missing required fields in JSON");
+}
+
+document.getElementById('outputEnglish').value = parsed.refined_english;
+
+const container = document.getElementById('anatomy-output');
+container.innerHTML='';
+
+const tree = parsed.anatomy_tree || {};
+
+parsed.causal_language.split(/\s+/).forEach(word=>{
+
+if(!word) return;
+
+const cleanKey = word.replace(/[.,!?;]/g,'');
+
+const bubble=document.createElement('div');
+bubble.className='word-bubble';
+bubble.innerHTML=highlightAnatomy(word);
+
+const modal=document.createElement('div');
+modal.className='tree-modal';
+
+const info = tree[cleanKey] || ["Anatomically Valid Unit"];
+
+info.forEach(d=>{
+const item=document.createElement('div');
+item.className='tree-item';
+item.innerHTML=String(d).replace(/([^:]+):/,"<b>$1:</b>");
+modal.appendChild(item);
+});
+
+bubble.appendChild(modal);
+container.appendChild(bubble);
+
+});
+
+}catch(e){
+console.error("FULL ERROR:",e);
+alert("Anatomical Error:\n"+e.message);
+}
+
+btn.disabled=false;
+btn.innerText="EXECUTE STABLE COMPILATION";
+}
+
 </script>
+
 </body>
 </html>
