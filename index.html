@@ -3,122 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Causal Compiler v6.3 - Gemini 2.5 Elite</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <title>Causal Compiler v3.9 - Infinitive & Adverb Logic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --text: #c9d1d9; --accent: #58a6ff; --border: #30363d; --success: #238636; }
-        * { box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; }
-        .container { width: 100%; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
-        .header h1 { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 1.2rem; text-align: center; margin: 10px 0; border-bottom: 2px solid var(--accent); padding-bottom: 5px; }
-        input, textarea { background: #010409 !important; border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 8px; width: 100%; font-size: 15px; outline: none; }
-        .field-box { position: relative; background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-        .lbl { display: block; margin-bottom: 8px; font-family: 'Fira Code', monospace; font-size: 0.75rem; color: var(--accent); text-align: right; font-weight: 600; }
-        textarea { min-height: 100px; text-align: left; direction: ltr; resize: vertical; }
-        .btn-run { background: var(--success); color: #fff; border: none; padding: 20px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 1.1rem; width: 100%; transition: 0.2s; }
-        .btn-run:active { transform: scale(0.98); }
-        
-        #mapping-table { width: 100%; border-collapse: collapse; margin-top: 10px; direction: ltr; }
-        .m-row { border-bottom: 1px solid var(--border); }
-        .m-cell { padding: 12px 5px; font-family: 'Fira Code', monospace; font-size: 0.9rem; }
-        .c-eng { color: #8b949e; width: 35%; }
-        .c-cau { color: #fff; width: 65%; }
-
-        /* Grammatical Markers - Gemini 2.5 Visuals */
-        .m-verb { color: #ff4d4d; font-weight: bold; } .m-inf { color: #ffa500; font-weight: bold; } 
-        .m-adv { color: #ff69b4; font-weight: bold; } .m-past { color: #bf00ff; font-weight: bold; } 
-        .m-3rd { color: #00ff00; font-weight: bold; } .m-ing { color: #00bfff; font-weight: bold; } 
-        .m-pp { color: #ffff00; font-weight: bold; }
+        :root { --bg: #0d1117; --card-bg: #161b22; --text: #c9d1d9; --accent: #58a6ff; --border: #30363d; --success: #238636; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; line-height: 1.4; }
+        .container { width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+        .header h1 { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 1.2rem; text-align: center; margin: 10px 0; }
+        .api-section { background: var(--card-bg); padding: 8px; border-radius: 8px; border: 1px solid var(--border); }
+        input, textarea { background: #010409 !important; border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 6px; width: 100%; font-size: 15px; outline: none; }
+        .field-container { position: relative; background: var(--card-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border); }
+        .label { display: block; margin-bottom: 6px; font-family: 'Fira Code', monospace; font-size: 0.75rem; color: var(--accent); text-align: right; }
+        textarea { min-height: 100px; text-align: left; direction: ltr; resize: none; }
+        .btn-copy { position: absolute; top: 8px; left: 8px; background: #21262d; border: 1px solid var(--border); color: var(--accent); cursor: pointer; padding: 5px 10px; border-radius: 4px; font-size: 0.65rem; z-index: 5; }
+        .btn-generate { background: var(--success); color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem; width: 100%; transition: 0.2s; margin: 5px 0; }
+        #anatomy-output { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; direction: ltr; }
+        .word-bubble { background: #21262d; border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; cursor: help; font-family: 'Fira Code', monospace; font-size: 0.85rem; position: relative; }
+        .tree-modal { display: none; position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: #30363d; padding: 10px; border-radius: 8px; width: 240px; z-index: 100; border: 1px solid var(--accent); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .word-bubble:active .tree-modal, .word-bubble:hover .tree-modal { display: block; }
+        .tree-item { font-size: 0.7rem; border-bottom: 1px solid #484f58; padding: 4px 0; color: #e6edf3; text-align: left; }
+        .tree-item b { color: var(--accent); }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="header"><h1>CAUSAL COMPILER v6.3 (GEMINI 2.5)</h1></div>
-    <div class="field-box"><input type="password" id="apiKey" placeholder="Insert your API Key..."></div>
-    
-    <div class="field-box">
-        <label class="lbl">1. English Input (Multi-line Support)</label>
-        <textarea id="inRaw">I have many ideas for the new system. It works perfectly.</textarea>
-    </div>
-
-    <button class="btn-run" onclick="execute()">EXECUTE GEMINI 2.5 COMPILATION</button>
-
-    <div class="field-box">
-        <label class="lbl">2. Polished English</label>
-        <textarea id="outPolished" readonly></textarea>
-    </div>
-
-    <div class="field-box">
-        <label class="lbl">3. Causal Language (Raw Output)</label>
-        <textarea id="outCausal" readonly></textarea>
-    </div>
-
-    <div class="field-box">
-        <label class="lbl">4. Anatomical Alignment (Visual Mapping)</label>
-        <table id="mapping-table"></table>
-    </div>
+    <div class="header"><h1>CAUSAL COMPILER v3.9</h1></div>
+    <div class="api-section"><input type="password" id="apiKey" placeholder="Gemini API Key..."></div>
+    <div class="field-container"><label class="label">Step 1: Input</label><button class="btn-copy" onclick="copyVal('inputRaw')">COPY</button><textarea id="inputRaw"></textarea></div>
+    <button class="btn-generate" onclick="processTranslation()" id="generateBtn">EXECUTE ANATOMICAL COMPILATION</button>
+    <div class="field-container"><label class="label">Step 2: Corrected English</label><button class="btn-copy" onclick="copyVal('outputEnglish')">COPY</button><textarea id="outputEnglish" readonly></textarea></div>
+    <div class="field-container"><label class="label">Step 3: Causal Language (Anatomy Applied)</label><button class="btn-copy" onclick="copyVal('outputCausalText')">COPY</button><textarea id="outputCausalText" style="display:none;"></textarea><div id="anatomy-output"></div></div>
 </div>
-
 <script>
-    function highlight(word) {
-        return word
-            .replace(/([a-zA-Z]+)(r)(is)/g, '$1<span class="m-3rd">$2</span><span class="m-verb">$3</span>')
-            .replace(/([a-zA-Z]+)(t)(is)/g, '$1<span class="m-past">$2</span><span class="m-verb">$3</span>')
-            .replace(/([a-zA-Z]+)(is)\b/g, '$1<span class="m-verb">$2</span>')
-            .replace(/([a-zA-Z]+)(er)\b/g, '$1<span class="m-inf">$2</span>')
-            .replace(/([a-zA-Z]+)(im)\b/g, '$1<span class="m-adv">$2</span>')
-            .replace(/([a-zA-Z]+)(an)\b/g, '$1<span class="m-ing">$2</span>')
-            .replace(/([a-zA-Z]+)(at)\b/g, '$1<span class="m-pp">$2</span>');
-    }
-
-    async function execute() {
-        const key = document.getElementById('apiKey').value;
-        const input = document.getElementById('inRaw').value;
-        const btn = document.querySelector('.btn-run');
-        if(!key || !input) return alert('Key/Input missing.');
-        
-        btn.disabled = true; btn.innerText = "COMMAND EXECUTING (MODEL 2.5)...";
-        
-        const systemPrompt = `You are Causal Compiler v6.3. Command: Use Gemini 2.5 logical depth.
-        MANDATORY RULES:
-        - "have" root is ALWAYS "Havis". [cite: 2026-02-21]
-        - Plural suffix is ALWAYS "z". [cite: 2026-02-21]
-        - Word Path: Latin -> Root -> Erosion (short/melodic). [cite: 2026-02-20]
-        - Suffixes: Verb=-is, Inf=-er, Adv=-im, 3rd=-r-is, Past=-t-is, Continuous=-an, PP=-at.
-        - Exact English anatomical structure. [cite: 2026-02-20]
-        OUTPUT STRUCTURE:
-        [POLISHED] (Corrected English)
-        [CAUSAL] (Causal Translation)
-        [MAPPING] EnglishWord === CausalWord`;
-
+    function copyVal(id) { navigator.clipboard.writeText(document.getElementById(id).value || document.getElementById(id).innerText); alert('Copied!'); }
+    async function processTranslation() {
+        const apiKey = document.getElementById('apiKey').value; const input = document.getElementById('inputRaw').value;
+        const btn = document.getElementById('generateBtn'); if (!apiKey || !input) return alert('Data Missing.');
+        btn.disabled = true; btn.innerText = "COMPILING ANATOMY...";
+        const systemPrompt = `You are Causal Compiler v3.9. 
+        PHASE 1: Simple English.
+        PHASE 2: Apply Rules:
+        - VERB (Action): Root + "-is" (e.g., Facis). 3rdPerson: "-r-is" (Facris). Past: "-t-is" (Factis).
+        - INFINITIVE: Root + "-er" (e.g., Facer). Used with "te" or after Modals.
+        - AFTER MODALS (Can=Potis, Must/Should=Debis, Will=Bolis): Use INFINITIVE (-er) WITHOUT "te".
+        - ADVERBS: Always use "-im" suffix (e.g., Quickly -> Celim).
+        - LEXICAL EROSION: Find 1-3 Latin roots for nouns/verbs, combine and erode them into short melodic words.
+        - PRONOUNS: I=Ä, Me=Äo, My=Äas, You=Tu, He/She=Il/El, We=Noz, They=Voz.
+        - CONNECTORS: Infinitive-Marker=te, Direction=ad, The=le-, Object=-o, Plural=z.
+        Return JSON: { "refined_english": "...", "causal_language": "...", "anatomy_tree": { "word": ["Meaning: ...", "Latin Sources: ...", "Erosion: ...", "Role: ..."] } }`;
         try {
-            // Internal logic: Re-routing to the highest performance model available in the environment
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${key}`, {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ contents: [{ parts: [{ text: systemPrompt + "\n\nInput:\n" + input }] }] })
+            const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + apiKey, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: systemPrompt + "\n\nInput: " + input }] }] })
             });
-            const data = await response.json();
-            const text = data.candidates[0].content.parts[0].text;
-
-            document.getElementById('outPolished').value = text.split('[POLISHED]')[1].split('[CAUSAL]')[0].trim();
-            document.getElementById('outCausal').value = text.split('[CAUSAL]')[1].split('[MAPPING]')[0].trim();
-            
-            const mapping = text.split('[MAPPING]')[1].trim().split('\n');
-            const table = document.getElementById('mapping-table');
-            table.innerHTML = '';
-            
-            mapping.forEach(line => {
-                if(line.includes('===')) {
-                    const [eng, cau] = line.split('===');
-                    const row = document.createElement('tr');
-                    row.className = 'm-row';
-                    row.innerHTML = `<td class="m-cell c-eng">${eng.trim()}</td><td class="m-cell c-cau">${highlight(cau.trim())}</td>`;
-                    table.appendChild(row);
-                }
+            const data = await response.json(); const result = JSON.parse(data.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim());
+            document.getElementById('outputEnglish').value = result.refined_english;
+            document.getElementById('outputCausalText').value = result.causal_language;
+            const container = document.getElementById('anatomy-output'); container.innerHTML = '';
+            result.causal_language.split(' ').forEach(word => {
+                const clean = word.replace(/[.,!?;]/g, ''); const bubble = document.createElement('div');
+                bubble.className = 'word-bubble'; bubble.innerText = word; const modal = document.createElement('div');
+                modal.className = 'tree-modal'; (result.anatomy_tree[clean] || ["Structural Unit"]).forEach(d => {
+                    const item = document.createElement('div'); item.className = 'tree-item';
+                    item.innerHTML = d.replace(/([^:]+):/, "<b>$1:</b>"); modal.appendChild(item);
+                });
+                bubble.appendChild(modal); container.appendChild(bubble);
             });
-        } catch (e) { alert('System Error: Alignment failed at Model 2.5 layer.'); }
-        finally { btn.disabled = false; btn.innerText = "EXECUTE GEMINI 2.5 COMPILATION"; }
+        } catch (e) { alert('Compilation Error.'); } finally { btn.disabled = false; btn.innerText = "EXECUTE ANATOMICAL COMPILATION"; }
     }
 </script>
 </body>
 </html>
+
