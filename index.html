@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Causal Compiler v4.2 - Debugged Anatomy</title>
+    <title>Causal Compiler v4.3 - Structural Repair</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #0d1117; --card-bg: #161b22; --text: #c9d1d9; --accent: #58a6ff; --border: #30363d; --success: #238636; }
@@ -20,7 +20,7 @@
         .btn-generate { background: var(--success); color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem; width: 100%; transition: 0.2s; margin: 5px 0; }
         #anatomy-output { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; direction: ltr; min-height: 50px; }
         
-        /* Marker Styles */
+        /* Anatomy Markers Colors */
         .m-verb { color: #ff4d4d !important; font-weight: bold; } /* is - Red */
         .m-inf  { color: #ffa500 !important; font-weight: bold; } /* er - Orange */
         .m-adv  { color: #ff69b4 !important; font-weight: bold; } /* im - Pink */
@@ -37,12 +37,12 @@
 </head>
 <body>
 <div class="container">
-    <div class="header"><h1>CAUSAL COMPILER v4.2</h1></div>
+    <div class="header"><h1>CAUSAL COMPILER v4.3</h1></div>
     <div class="api-section"><input type="password" id="apiKey" placeholder="Gemini API Key..."></div>
     <div class="field-container"><label class="label">Step 1: Input</label><button class="btn-copy" onclick="copyRaw('inputRaw')">COPY</button><textarea id="inputRaw"></textarea></div>
-    <button class="btn-generate" onclick="processTranslation()" id="generateBtn">EXECUTE DEBUGGED COMPILATION</button>
+    <button class="btn-generate" onclick="processTranslation()" id="generateBtn">EXECUTE STABLE COMPILATION</button>
     <div class="field-container"><label class="label">Step 2: Corrected English</label><button class="btn-copy" onclick="copyRaw('outputEnglish')">COPY</button><textarea id="outputEnglish" readonly></textarea></div>
-    <div class="field-container"><label class="label">Step 3: Causal Language (Colored Anatomy)</label><button class="btn-copy" onclick="copyBubbles()">COPY</button><div id="anatomy-output"></div></div>
+    <div class="field-container"><label class="label">Step 3: Causal Language (Color-Coded)</label><button class="btn-copy" onclick="copyBubbles()">COPY</button><div id="anatomy-output"></div></div>
 </div>
 <script>
     function copyRaw(id) { navigator.clipboard.writeText(document.getElementById(id).value); alert('Copied!'); }
@@ -52,7 +52,7 @@
     }
     
     function highlightAnatomy(word) {
-        // Highlighting logic applied locally to prevent JSON errors
+        // Precise local highlighting without breaking JSON
         return word
             .replace(/([a-zA-Z]+)(r)(is)/g, '$1<span class="m-3rd">$2</span><span class="m-verb">$3</span>')
             .replace(/([a-zA-Z]+)(t)(is)/g, '$1<span class="m-past">$2</span><span class="m-verb">$3</span>')
@@ -67,16 +67,17 @@
         const apiKey = document.getElementById('apiKey').value;
         const input = document.getElementById('inputRaw').value;
         const btn = document.getElementById('generateBtn');
-        if (!apiKey || !input) return alert('API Key or Input missing.');
+        if (!apiKey || !input) return alert('Input Required.');
         
-        btn.disabled = true; btn.innerText = "FIXING ANATOMY...";
+        btn.disabled = true; btn.innerText = "STABILIZING JSON...";
         
-        const systemPrompt = `You are Causal Compiler v4.2. RULE 1: Latin -> Root -> Erosion. 
-        NO HTML TAGS in output.
-        - VERB: -is, INFINITIVE: -er, ADVERB: -im, 3rd: -r-is, PAST: -t-is, ING: -an, PP: -at.
-        - AFTER MODALS (Potis/Debis/Bolis): Use -er without "te".
-        - PRONOUNS: I=Ä, You=Tu, He/She=Il/El.
-        - HAVE: Havis [cite: 2026-02-21]. PLURAL: -z [cite: 2026-02-21].
+        const systemPrompt = `You are Causal Compiler v4.3. 
+        - RULE 1: Latin -> Root -> Erosion. No need for Turkish filter. [cite: 2026-02-20]
+        - PLURAL: Use 'z' suffix. [cite: 2026-02-21]
+        - HAVE: 'Havis'. [cite: 2026-02-21]
+        - STRUCTURE: Exactly like English. [cite: 2026-02-20]
+        - RULES: Verb=-is, Infinitive=-er, Adverb=-im, 3rd=-r-is, Past=-t-is, Continuous=-an, PP=-at.
+        - NO HTML TAGS in causal_language field. Pure text only.
         Return JSON ONLY: { "refined_english": "...", "causal_language": "...", "anatomy_tree": { "word": ["Meaning: ...", "Latin: ...", "Erosion: ..."] } }`;
 
         try {
@@ -86,7 +87,12 @@
             });
             const data = await response.json();
             const rawText = data.candidates[0].content.parts[0].text;
-            const cleanJson = rawText.substring(rawText.indexOf('{'), rawText.lastIndexOf('}') + 1);
+            
+            // Advanced Extraction: Finding the first '{' and last '}'
+            const startIndex = rawText.indexOf('{');
+            const endIndex = rawText.lastIndexOf('}');
+            if (startIndex === -1 || endIndex === -1) throw new Error("JSON structure not found");
+            const cleanJson = rawText.substring(startIndex, endIndex + 1);
             const result = JSON.parse(cleanJson);
             
             document.getElementById('outputEnglish').value = result.refined_english;
@@ -101,7 +107,7 @@
                 
                 const modal = document.createElement('div');
                 modal.className = 'tree-modal';
-                (result.anatomy_tree[cleanKey] || ["Anatomical Unit"]).forEach(d => {
+                (result.anatomy_tree[cleanKey] || ["Logical Mapping Applied"]).forEach(d => {
                     const item = document.createElement('div');
                     item.className = 'tree-item';
                     item.innerHTML = d.replace(/([^:]+):/, "<b>$1:</b>");
@@ -112,9 +118,9 @@
             });
         } catch (e) { 
             console.error(e);
-            alert('Anatomical Error: JSON parsing failed. Please try again.'); 
+            alert('Anatomical Error: Parsing failed. Re-executing might fix it.'); 
         } finally { 
-            btn.disabled = false; btn.innerText = "EXECUTE DEBUGGED COMPILATION"; 
+            btn.disabled = false; btn.innerText = "EXECUTE STABLE COMPILATION"; 
         }
     }
 </script>
